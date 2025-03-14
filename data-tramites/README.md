@@ -3,7 +3,7 @@
 Setup the environment:
 
 ```bash
-uv install
+uv venv
 ```
 
 Extract the information from the pdf and store it into the db:
