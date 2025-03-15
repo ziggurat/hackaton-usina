@@ -51,6 +51,13 @@ def read_root():
 async def post_media_file():
     return FileResponse("./data/voice.mp3", media_type="audio/mpeg")
 
+@app.get("/dummy-response/")
+async def dummyresponse():
+    return FileResponse("agent": "agentx", "text_response": "lalala", "audio_response": "lalala response")
+
+@app.post("/post-dummy-response/")
+async def dummyresponse(file: UploadFile):
+    return FileResponse("agent": "agentx", "text_response": "lalala", "audio_response": file)
 
 @app.post("/uploadaudio/")
 async def create_upload_file(file: UploadFile):
