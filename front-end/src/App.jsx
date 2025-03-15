@@ -5,15 +5,16 @@ import Recorder from './components/Recorder'
 
 function App() {
 
-  const handleAudioRecorded = (blob) => {
+  const handleAudioRecorded = async (blob) => {
     console.log('Audio grabado:', blob);
     // TODO: llamar a la API del router chatbot
     const formData = new FormData();
     formData.append('file', blob);
 
     try {
-      const response = fetch('https://hackaton-usina-002a8d39a56a.herokuapp.com/uploadaudio/', {
+      const response = await fetch('https://hackaton-usina-002a8d39a56a.herokuapp.com/uploadaudio/', {
         method: 'POST',
+        headers: new Headers({'content-type': 'application/json'}),
         body: formData
       });
       console.log('Respuesta de la API:', response);
