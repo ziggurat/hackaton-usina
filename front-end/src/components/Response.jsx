@@ -1,6 +1,6 @@
 import React from "react";
 
-const Respuesta = ({ response }) => {
+const Response = ({ response }) => {
   if (!response) return null; // Evita errores si no hay datos
 
   const { agent, text_response, audio_response } = response;
@@ -26,4 +26,4 @@ const Respuesta = ({ response }) => {
   );
 };
 
-export default Respuesta;
+export default Response;

@@ -1,9 +1,11 @@
 import usinaLogo from './assets/logoUsina.jpg'
-import keyboardImage from './assets/teclado.svg'
 import './App.css'
 import Recorder from './components/Recorder'
+import Response from './components/Response'
+import exampleResponse from './mock-data/response.json'
 
 function App() {
+  // const [response, setResponse] = useState(null);
 
   const handleAudioRecorded = async (blob) => {
     console.log('Audio grabado:', blob);
@@ -20,7 +22,16 @@ function App() {
       console.log('Respuesta de la API:', response);
     } catch (error) {
       console.error('Error al llamar a la API:', error);
-      return null;  
+      // return null;  
+    }
+
+    // Obtener respuesta de prueba
+    try {
+      // Usar respuesta de prueba
+      console.log('Respuesta de PRUEBA:', exampleResponse);
+    }
+    catch (error) {
+      console.error('Error al leer la respuesta de PRUEBA:', error);
     }
   }
 
@@ -38,6 +49,8 @@ function App() {
         <h1>En que te puedo ayudar?</h1>
         <div className='buttons'>
           <Recorder onAudioRecorded={handleAudioRecorded}/>
+          <Response response={exampleResponse} />
+
           {/* <button className='mic' 
             onClick={() => record()}>
             <img src={ micImage } alt="Grabar una pregunta" />
