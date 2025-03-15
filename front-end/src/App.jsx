@@ -1,5 +1,6 @@
 import usinaLogo from './assets/logo-usina.png'
 import micImage from './assets/mic.svg'
+import keyboardImage from './assets/teclado.svg'
 import './App.css'
 
 function App() {
@@ -25,8 +26,8 @@ function App() {
             onClick={() => record()}>
             <img src={ micImage } alt="Grabar una pregunta" />
           </button>
-          <button onClick={() => showKeyboard()}>
-            Teclado en pantalla
+          <button className='keyBoard' onClick={() => showKeyboard()}>
+            <img src={ keyboardImage } alt="opcion teclado" />
           </button>
         </div>
       </div>

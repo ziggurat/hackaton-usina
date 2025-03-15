@@ -17,6 +17,10 @@
   transition: filter 300ms;
 }
 
+.keyBoard{
+  color: #333;
+}
+
 .chat {
   display: flex;
   flex-direction: column;
