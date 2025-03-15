@@ -53,11 +53,7 @@ async def post_media_file():
 
 @app.get("/dummy-response/")
 async def dummyresponse():
-    return FileResponse("agent": "agentx", "text_response": "lalala", "audio_response": "lalala response")
-
-@app.post("/post-dummy-response/")
-async def dummyresponse(file: UploadFile):
-    return FileResponse("agent": "agentx", "text_response": "lalala", "audio_response": file)
+    return {"agent": "agentx", "text_response": "lalala", "audio_response": "lalala response"}
 
 @app.post("/uploadaudio/")
 async def create_upload_file(file: UploadFile):
