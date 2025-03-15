@@ -5,6 +5,24 @@ import Recorder from './components/Recorder'
 
 function App() {
 
+  const handleAudioRecorded = (blob) => {
+    console.log('Audio grabado:', blob);
+    // TODO: llamar a la API del router chatbot
+    const formData = new FormData();
+    formData.append('file', blob);
+
+    try {
+      const response = fetch('https://hackaton-usina-002a8d39a56a.herokuapp.com/uploadaudio/', {
+        method: 'POST',
+        body: formData
+      });
+      console.log('Respuesta de la API:', response);
+    } catch (error) {
+      console.error('Error al llamar a la API:', error);
+      return null;  
+    }
+  }
+
   const showKeyboard = () => {
     console.log('Mostrando teclado...');
   }
@@ -18,7 +36,7 @@ function App() {
       <div className="chat">
         <h1>En que te puedo ayudar?</h1>
         <div className='buttons'>
-          <Recorder/>
+          <Recorder onAudioRecorded={handleAudioRecorded}/>
           {/* <button className='mic' 
             onClick={() => record()}>
             <img src={ micImage } alt="Grabar una pregunta" />

@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import micImage from '../assets/mic.svg'
 import "./Recorder.css";
 
-const Recorder = ()=>{
+const Recorder = ({ onAudioRecorded }) =>{
   const [recording, setRecording] = useState(false);
   const mediaRecorder = useRef(null);
   const audioChunks = useRef([]);
@@ -21,8 +21,7 @@ const Recorder = ()=>{
 
       mediaRecorder.current.onstop = () => {
         const audioBlob = new Blob(audioChunks.current, { type: "audio/mp3" });
-        const url = URL.createObjectURL(audioBlob);
-        autoDownload(url); // Llamamos la función para descargar automáticamente
+        onAudioRecorded(audioBlob);
         audioChunks.current = []; // Limpiar buffer
       };
 
@@ -41,32 +40,22 @@ const Recorder = ()=>{
     }
   };
 
-  // Función para descargar automáticamente el archivo
-  const autoDownload = (url) => {
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "grabacion.mp3";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  };
-
-    return (
-        <div className="recorder">
-          <button className='mic'
-            onMouseDown={startRecording}
-            onMouseUp={stopRecording}
-            onTouchStart={startRecording}
-            onTouchEnd={stopRecording}
-          >
-            <img src={ micImage } alt="Grabar una pregunta" />
-          </button>
-          <span>
-            {recording ? "Grabando..." : "Mantén presionado"}
-          </span>
-    
-        </div>
-      );
+  return (
+      <div className="recorder">
+        <button className='mic'
+          onMouseDown={startRecording}
+          onMouseUp={stopRecording}
+          onTouchStart={startRecording}
+          onTouchEnd={stopRecording}
+        >
+          <img src={ micImage } alt="Grabar una pregunta" />
+        </button>
+        <span>
+          {recording ? "Grabando..." : "Mantén presionado"}
+        </span>
+  
+      </div>
+    );
 }
 
 export default Recorder
