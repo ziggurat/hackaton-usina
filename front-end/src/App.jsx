@@ -3,15 +3,17 @@ import './App.css'
 import Recorder from './components/Recorder'
 import Response from './components/Response'
 import exampleResponse from './mock-data/response.json'
+import { useState } from 'react'
 
 function App() {
-  // const [response, setResponse] = useState(null);
+   const [response, setResponse] = useState(null);
 
   const handleAudioRecorded = async (blob) => {
     console.log('Audio grabado:', blob);
     // TODO: llamar a la API del router chatbot
     const formData = new FormData();
     formData.append('file', blob);
+    setResponse(true)
 
     try {
       const response = await fetch('https://hackaton-usina-002a8d39a56a.herokuapp.com/uploadaudio/', {
@@ -49,8 +51,10 @@ function App() {
         <h1>En que te puedo ayudar?</h1>
         <div className='buttons'>
           <Recorder onAudioRecorded={handleAudioRecorded}/>
-          <Response response={exampleResponse} />
-
+          {response && (
+            <Response response={exampleResponse} />
+          )}
+          
           {/* <button className='mic' 
             onClick={() => record()}>
             <img src={ micImage } alt="Grabar una pregunta" />
