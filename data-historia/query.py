@@ -19,6 +19,8 @@ load_dotenv()
 image_loader = ImageLoader()
 
 
+
+
 def resize_base64_image(base64_string, size=(128, 128)):
     """
     Resize an image encoded as a Base64 string.
@@ -89,10 +91,12 @@ def prompt_func(data_dict):
     text_message_initial = {
         "type": "text",
         "text": (
-            "Como experto en preguntas analiza si la pregunta realizada es concisa y directa o si precisa de contexto y detalles adicionales. "
-            "Clasifica la pregunta en una de las siguientes categorías:\n"
-            "- Pregunta directa: Pregunta que no necesita de contexto adicional para ser respondida.\n"
-            "- Pregunta abierta: Pregunta que necesita de contexto adicional para ser respondida.\n"
+            "Como experto en preguntas analiza si la pregunta realizada es directa o si es abierta. "
+            "Una pregunta directa pide datos concretos. Una pregunta abierta requiere contexto, análisis histórico, resúmenes, comparativas.\n"
+            "- Decidir si la pregunta del usuario es directa o abierta.\n"
+            #"Clasifica la pregunta en una de las siguientes categorías:\n"
+            #"- Pregunta directa: Pregunta que no necesita de contexto adicional para ser respondida.\n"
+            #"- Pregunta abierta: Pregunta que necesita de contexto adicional para ser respondida.\n"
             "Instrucciones:\n"
             "- NO incluyas el tipo de pregunta en la respuesta."
         )
@@ -100,9 +104,9 @@ def prompt_func(data_dict):
     messages.append(text_message_initial)
     initial_response = [HumanMessage(content=messages)]
 
-    print("initial response: \n")
-    print(initial_response)
-    print("\n")
+    #print("initial response: \n")
+    #print(initial_response)
+    #print("\n")
 
     # Adding the text message for analysis
     text_message = {
@@ -111,17 +115,21 @@ def prompt_func(data_dict):
             "Como historiador experto y particularmente en la historia de la Usina de Tandil, tu tarea es analizar e interpretar textos e imágenes "
             "considerando su importancia histórica y cultural. Ambos se recuperarán de una vectorstore basada "
             "en las palabras clave ingresadas por el usuario. Utiliza tu amplio conocimiento y habilidades analíticas para proporcionar una "
-            "respuesta.\n"
+            "respuesta analizando los chunks minuciosamente y filtrando información similar dependiendo el contexto histórico y cronológico.\n"
             #f"La pregunta del usuario es: {initial_response}\n"
             "Si la pregunta es abierta haz lo siguiente:\n"
+            "- Responde la pregunta entre 300 y 1000 caracteres.\n"
             "- El contexto histórico y cultural del texto (si corresponde).\n"
             "- Conexiones entre el texto y la imagen (si la hay).\n"
+            
             "Si la pregunta es concisa haz lo siguiente:\n"
-            "- Responde la pregunta de manera concisa y directa en no más de dos lineas de texto.\n"
+            "- Responde la pregunta en no más de 300 caracteres.\n"
             "Instrucciones:\n"
+            "- Evalúa la cronología de los eventos para contrastar hechos y fechas correctamente.\n"
             "- Brinda tu respuesta en español.\n"
             "- Trae una única imagen.\n"
-            "- La respuesta NO debe incluir el análisis previo."
+            "- La respuesta NO debe incluir el análisis previo.\n"
+            "- NO INVENTES. Limitate estrictamente al contexto proporcionada.\n"
             f"Palabras clave proporcionadas por el usuario: {data_dict['question']}\n\n"
             "Texto y/o tablas:\n"
             f"{formatted_texts}"
@@ -131,9 +139,9 @@ def prompt_func(data_dict):
     final_response = [HumanMessage(content=messages)]
 
     #final_response.pop(0)
-    print("final response: \n")
-    print(final_response)
-    print("\n")
+    #print("final response: \n")
+    #print(final_response)
+    #print("\n")
 
     return final_response
 
@@ -229,7 +237,7 @@ def main():
     pages_found = set()
 
     if query:
-        docs = create_text_retriever().invoke(query, k=3)
+        docs = create_text_retriever().invoke(query, k=6)
 
         if (len(docs) == 0):
             print("No hay resultados")
