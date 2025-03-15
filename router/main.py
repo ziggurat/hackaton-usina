@@ -64,16 +64,11 @@ async def create_upload_file(file: UploadFile):
     # send to process
     agent_text_response = process(transcript)
     agent_audio_response = text_to_speech(agent_text_response)
-    
-    
+
     return {"agent": agent, "text_response": agent_text_response, "audio_response": agent_audio_response}
 
 def who_is_the_agent(transcript):
-    
     return transcript
     
 def process(transcript):
-    
     return transcript
-    
-print("ando!")
