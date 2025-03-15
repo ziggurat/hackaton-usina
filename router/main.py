@@ -2,6 +2,7 @@ from typing import Annotated
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import FileResponse
 from helpers import text_to_speech, speech_to_text
+from usina_semantic_router import UsinaSemanticRouter
 
 
  ## OPEN AI
@@ -54,12 +55,13 @@ async def create_upload_file(file: UploadFile):
     # Write the audio bytes to a file
     webm_file_path = "temp_audio.mp3"
     with open(webm_file_path, "wb") as f:
-        f.write(UploadFile)
+        f.write(file)
     # get the translation
     transcript = speech_to_text(webm_file_path)
     
     # who is the agent
-    agent = who_is_the_agent(transcript)
+    semantic_router = UsinaSemanticRouter()
+    agent = semantic_router.get_route(transcript)
     
     # send to process
     agent_text_response = process(transcript)
