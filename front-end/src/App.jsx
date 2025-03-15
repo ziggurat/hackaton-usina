@@ -17,16 +17,18 @@ function App() {
       <div className="header">
         <img className='logo' 
           src={usinaLogo} alt="Usina Logo" />
-        <h1>En que te puedo ayudar?</h1>
       </div>
-      <div className="buttons">
-        <button className='mic' 
-          onClick={() => record()}>
-          <img src={ micImage } alt="Grabar una pregunta" />
-        </button>
-        <button onClick={() => showKeyboard()}>
-          Teclado en pantalla
-        </button>
+      <div className="chat">
+        <h1>En que te puedo ayudar?</h1>
+        <div className='buttons'>
+          <button className='mic' 
+            onClick={() => record()}>
+            <img src={ micImage } alt="Grabar una pregunta" />
+          </button>
+          <button onClick={() => showKeyboard()}>
+            Teclado en pantalla
+          </button>
+        </div>
       </div>
       <p className="read-the-docs">
         Acá puede ir un link a ayuda.

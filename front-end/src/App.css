@@ -3,6 +3,7 @@
   /* padding: 2rem; */
   display: flex;
   flex-direction: column;
+  row-gap: 32px;
   text-align: center;
   /* width: 100%; */
   margin: 0 auto;
@@ -16,19 +17,31 @@
   transition: filter 300ms;
 }
 
-.buttons {
+.chat {
   display: flex;
   flex-direction: column;
-  row-gap: 32px;
+  row-gap: 16px;
   width: 100%;
   align-items: center;
 
-  /* max-width: 480px; */
+  .buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 16px;
 
-  .mic {
-    border-radius: 100%;
-    color: #f0f0f0;
-    background-color: #e65a5a;
+    .mic {
+      display: flex;
+      width: 96px;
+      height: 96px;
+      border-radius: 100%;
+      color: #f0f0f0;
+      background-color: #e65a5a;
+  
+      img {
+        width: 64px;
+      }
+    }
   }
 }
 
