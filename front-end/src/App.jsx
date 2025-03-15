@@ -1,13 +1,9 @@
 import usinaLogo from './assets/logo-usina.png'
-import micImage from './assets/mic.svg'
 import keyboardImage from './assets/teclado.svg'
 import './App.css'
+import Recorder from './components/Recorder'
 
 function App() {
-
-  const record = () => {
-    console.log('Grabando...');
-  }
 
   const showKeyboard = () => {
     console.log('Mostrando teclado...');
@@ -22,12 +18,14 @@ function App() {
       <div className="chat">
         <h1>En que te puedo ayudar?</h1>
         <div className='buttons'>
-          <button className='mic' 
+          <Recorder/>
+          {/* <button className='mic' 
             onClick={() => record()}>
             <img src={ micImage } alt="Grabar una pregunta" />
-          </button>
-          <button className='keyBoard' onClick={() => showKeyboard()}>
-            <img src={ keyboardImage } alt="opcion teclado" />
+          </button> */}
+          <button className='keyboard' onClick={() => showKeyboard()}>
+            {/* <img src={ keyboardImage } alt="opcion teclado" /> */}
+            <span>Teclado en pantalla</span>
           </button>
         </div>
       </div>

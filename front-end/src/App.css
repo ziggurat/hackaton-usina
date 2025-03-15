@@ -34,16 +34,10 @@
     align-items: center;
     row-gap: 16px;
 
-    .mic {
-      display: flex;
-      width: 96px;
-      height: 96px;
-      border-radius: 100%;
-      color: #f0f0f0;
-      background-color: #e65a5a;
-  
+    .keyboard {
       img {
-        width: 64px;
+        fill: #333;
+        color: #333;
       }
     }
   }

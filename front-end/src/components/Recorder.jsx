@@ -1,5 +1,8 @@
 import { useState, useRef } from "react";
-const Grabador = ()=>{
+import micImage from '../assets/mic.svg'
+import "./Recorder.css";
+
+const Recorder = ()=>{
   const [recording, setRecording] = useState(false);
   const mediaRecorder = useRef(null);
   const audioChunks = useRef([]);
@@ -49,21 +52,26 @@ const Grabador = ()=>{
   };
 
     return (
-        <div className="text-center">
-          <button
+        <div className="recorder">
+          <button className='mic'
             onMouseDown={startRecording}
             onMouseUp={stopRecording}
             onTouchStart={startRecording}
             onTouchEnd={stopRecording}
-            className={`px-4 py-2 rounded-full ${
-              recording ? "bg-red-500" : "bg-blue-500"
-            } text-white`}
           >
-            {recording ? "Grabando..." : "Mantén presionado"}
+            <img src={ micImage } alt="Grabar una pregunta" />
           </button>
+          <span>
+            {recording ? "Grabando..." : "Mantén presionado"}
+          </span>
     
         </div>
       );
 }
 
-export default Grabador
+export default Recorder
+
+
+// className={`px-4 py-2 rounded-full ${
+//   recording ? "bg-red-500" : "bg-blue-500"
+// } text-white`}
