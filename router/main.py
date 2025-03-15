@@ -1,8 +1,6 @@
 from typing import Annotated
 from fastapi import FastAPI, File, UploadFile
-
- ## Helper
-from helpers import text_to_speech, autoplay_audio, speech_to_text
+from fastapi.responses import FileResponse
 
 
  ## OPEN AI
@@ -31,24 +29,6 @@ def read_root():
 ##    <input type='submit'>
 ## </form>
 
-@app.post("/uploadaudio/")
-async def create_upload_file(file: UploadFile):
-
-    # Write the audio bytes to a file
-    webm_file_path = "temp_audio.mp3"
-    with open(webm_file_path, "wb") as f:
-        f.write(UploadFile)
-    # get the translation
-    transcript = speech_to_text(webm_file_path)
-    
-    # who is the agent
-    agent = who_is_the_agent(tgranscript)
-    
-    # send to process
-    agent_text_response = process(transcript)
-    agent_audio_response = text_to_speech(final_response)
-    
-    
-    return {"agent": agent, "text_response": agent_text_response, "audio_response": agent_audio_response}
-
-
+@app.get("/example-response/")
+async def post_media_file():
+    return FileResponse("./data/voice.mp3", media_type="audio/mpeg")
