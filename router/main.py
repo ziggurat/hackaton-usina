@@ -1,4 +1,7 @@
 from typing import Annotated
+
+import aiofiles
+import uvicorn
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import FileResponse
 from helpers import text_to_speech, speech_to_text
@@ -23,10 +26,7 @@ openai.api_key = api_key
 app = FastAPI()
 
 origins = [
-    "*",
-    "*",
-    "*",
-    "*",
+    "*",  # Allow all origins
 ]
 
 app.add_middleware(
@@ -60,14 +60,17 @@ async def create_upload_file(file: UploadFile):
 
     # Write the audio bytes to a file
     webm_file_path = "temp_audio.mp3"
-    print(file.filename)
+    async with aiofiles.open(webm_file_path, 'wb') as out_file:
+        content = await file.read()
+        await out_file.write(content)
+
     # get the translation
     transcript = speech_to_text(webm_file_path)
-    
+
     # who is the agent
     semantic_router = UsinaSemanticRouter()
     agent = semantic_router.get_route(transcript)
-    
+
     # send to process
     agent_text_response = process(transcript)
     agent_audio_response = text_to_speech(agent_text_response)
@@ -79,3 +82,6 @@ def who_is_the_agent(transcript):
     
 def process(transcript):
     return transcript
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
