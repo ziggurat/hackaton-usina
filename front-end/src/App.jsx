@@ -1,4 +1,4 @@
-import usinaLogo from './assets/logo-usina.png'
+import usinaLogo from './assets/logoUsina.jpg'
 import keyboardImage from './assets/teclado.svg'
 import './App.css'
 import Recorder from './components/Recorder'
