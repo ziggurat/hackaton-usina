@@ -9,32 +9,38 @@ function App() {
    const [response, setResponse] = useState(null);
 
   const handleAudioRecorded = async (blob) => {
+    setResponse(null);
     console.log('Audio grabado:', blob);
     // TODO: llamar a la API del router chatbot
     const formData = new FormData();
     formData.append('file', blob);
-    setResponse(true)
 
     try {
+      // const response = await fetch('https://hackaton-usina-002a8d39a56a.herokuapp.com/dummy-response/');
+      // const data = await response.json();
+      // console.log('[API Dummy] Data de ka respuesta:', data);
+
+
       const response = await fetch('https://hackaton-usina-002a8d39a56a.herokuapp.com/uploadaudio/', {
         method: 'POST',
-        headers: new Headers({'content-type': 'application/json'}),
-        body: formData
+        headers: { 'Content-Type': 'multipart/form-data' },
+        body: formData,
+
       });
+      
       console.log('Respuesta de la API:', response);
+      const data = await response.json();
+      setResponse(data);
     } catch (error) {
       console.error('Error al llamar a la API:', error);
+      // TMP: Seteo respuesta de prueba;
+      setResponse(exampleResponse);
       // return null;  
     }
+  }
 
-    // Obtener respuesta de prueba
-    try {
-      // Usar respuesta de prueba
-      console.log('Respuesta de PRUEBA:', exampleResponse);
-    }
-    catch (error) {
-      console.error('Error al leer la respuesta de PRUEBA:', error);
-    }
+  const handleRecording = () => {
+    setResponse(null);
   }
 
   const showKeyboard = () => {
@@ -47,22 +53,23 @@ function App() {
         <img className='logo' 
           src={usinaLogo} alt="Usina Logo" />
       </div>
-      <div className="chat">
+      <div className="chat-container">
         <h1>En que te puedo ayudar?</h1>
-        <div className='buttons'>
-          <Recorder onAudioRecorded={handleAudioRecorded}/>
+        <div className='chat'>
+          <div className='buttons'>
+            <Recorder onAudioRecorded={handleAudioRecorded} 
+              onRecord={handleRecording}/>
+            
+            <button className='keyboard' onClick={() => showKeyboard()}>
+              {/* <img src={ keyboardImage } alt="opcion teclado" /> */}
+              <span>Teclado en pantalla</span>
+            </button>
+          </div>
+          
           {response && (
-            <Response response={exampleResponse} />
+            <Response response={response} />
           )}
           
-          {/* <button className='mic' 
-            onClick={() => record()}>
-            <img src={ micImage } alt="Grabar una pregunta" />
-          </button> */}
-          <button className='keyboard' onClick={() => showKeyboard()}>
-            {/* <img src={ keyboardImage } alt="opcion teclado" /> */}
-            <span>Teclado en pantalla</span>
-          </button>
         </div>
       </div>
       <p className="read-the-docs">

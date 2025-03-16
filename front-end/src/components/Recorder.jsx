@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import micImage from '../assets/mic.svg'
 import "./Recorder.css";
 
-const Recorder = ({ onAudioRecorded }) =>{
+const Recorder = ({ onAudioRecorded, onRecord }) =>{
   const [recording, setRecording] = useState(false);
   const mediaRecorder = useRef(null);
   const audioChunks = useRef([]);
@@ -10,6 +10,7 @@ const Recorder = ({ onAudioRecorded }) =>{
   // Iniciar la grabación cuando el usuario presiona el botón
   const startRecording = async () => {
     try {
+      onRecord();
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorder.current = new MediaRecorder(stream);
 

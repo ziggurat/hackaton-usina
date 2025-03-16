@@ -21,26 +21,34 @@
   color: #333;
 }
 
-.chat {
+.chat-container {
   display: flex;
   flex-direction: column;
   row-gap: 16px;
   width: 100%;
   align-items: center;
 
-  .buttons {
+  .chat {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    row-gap: 16px;
-
-    .keyboard {
-      img {
-        fill: #333;
-        color: #333;
+    column-gap: 32px;
+    
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      row-gap: 16px;
+  
+      .keyboard {
+        img {
+          fill: #333;
+          color: #333;
+        }
       }
     }
   }
+
 }
 
 .read-the-docs {
