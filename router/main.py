@@ -66,11 +66,15 @@ async def create_upload_file(file: UploadFile, response: Response):
     # Generate a unique filename using uuid
     unique_filename = f"{uuid.uuid4()}"  # Generate a unique filename with .mp3 extensio    n
 
-    # Write the audio bytes to a temporary file with the unique name
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3", prefix= unique_filename) as temp_file:
-        content = await file.read()
-        temp_file.write(content)
-        webm_file_path = temp_file.name
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
+    temp_file_path = temp_file.name
+    temp_file.close()  # Close the file so aiofiles can open it
+
+    # Write content to the temporary file asynchronously
+    async with aiofiles.open(temp_file_path, 'wb') as out_file:
+        content = await file.read()  # Read the content of the UploadFile
+        await out_file.write(content)
+        webm_file_path = temp_file_path
 
     """
     # Get the translation
