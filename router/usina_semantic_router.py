@@ -1,9 +1,5 @@
 from semantic_router import Route, SemanticRouter
-
-import os
-from semantic_router.encoders import CohereEncoder, OpenAIEncoder
-
-from fastapi import APIRouter
+from semantic_router.encoders import OpenAIEncoder
 
 historia = Route(
     name="historia",
@@ -42,7 +38,6 @@ tramites = Route(
 routes = [historia, organigrama, tramites]
 
 class UsinaSemanticRouter:
-
     def get_route(self, query):
         encoder = OpenAIEncoder()
         semantic_router = SemanticRouter(encoder=encoder, routes=routes, auto_sync="local")
