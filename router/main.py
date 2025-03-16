@@ -33,7 +33,7 @@ openai.api_key = api_key
 app = FastAPI()
 
 origins = [
-    "*",  # Allow all origins
+    "*",    
 ]
 
 app.add_middleware(
@@ -90,8 +90,7 @@ async def create_upload_file(file: UploadFile, response: Response):
     return {
         "agent": agent,
         "text_response": agent_text_response,
-        "audio_response_url": audio_file_url,
-        "Access-Control-Allow-Origin": "*"
+        "audio_response_url": audio_file_url,        
     }    
 
     # Get the translation
