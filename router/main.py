@@ -1,3 +1,4 @@
+import io
 import tempfile
 from typing import Annotated
 
@@ -9,7 +10,7 @@ import aiofiles
 import uvicorn
 from fastapi import FastAPI, File, UploadFile, Response
 from fastapi.responses import FileResponse
-from helpers import text_to_speech, speech_to_text
+from helpers import text_to_speech, speech_to_text, speech_to_text_from_file
 from usina_semantic_router import UsinaSemanticRouter
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -62,24 +63,18 @@ async def dummyresponse():
     return {"agent": "agentx", "text_response": "lalala", "audio_response": "lalala response"}
 
 @app.post("/uploadaudio/")
-async def create_upload_file(file: UploadFile, response: Response):
+async def create_upload_file(file: UploadFile, response: Response):        
     # Generate a unique filename using uuid
     unique_filename = f"{uuid.uuid4()}"  # Generate a unique filename with .mp3 extensio    n
-
-    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
-    temp_file_path = temp_file.name
-    temp_file.close()  # Close the file so aiofiles can open it
-
-    # Write content to the temporary file asynchronously
-    async with aiofiles.open(temp_file_path, 'wb') as out_file:
-        content = await file.read()  # Read the content of the UploadFile
-        await out_file.write(content)
-        webm_file_path = temp_file_path
-
-    """
+      
     # Get the translation
-    transcript = speech_to_text(webm_file_path)
+    audio_data = await file.read()
+    buffer = io.BytesIO(audio_data)
+    buffer.name = f"{unique_filename}.mp3"
+    transcript = speech_to_text_from_file(buffer)
+    # transcript = speech_to_text(webm_file_path)
 
+    
     # Who is the agent
     semantic_router = UsinaSemanticRouter()
     agent = semantic_router.get_route(transcript)
@@ -97,9 +92,7 @@ async def create_upload_file(file: UploadFile, response: Response):
         "text_response": agent_text_response,
         "audio_response_url": audio_file_url,
         "Access-Control-Allow-Origin": "*"
-    }
-    """
-    return {"Hola": "Mundo"}
+    }    
 
     # Get the translation
 def who_is_the_agent(transcript):
