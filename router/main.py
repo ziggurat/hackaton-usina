@@ -19,6 +19,7 @@ import os
 import openai
 from openai import OpenAI
 from dotenv import load_dotenv
+import uuid  # Import the uuid module
 
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
@@ -62,8 +63,11 @@ async def dummyresponse():
 
 @app.post("/uploadaudio/")
 async def create_upload_file(file: UploadFile, response: Response):
-    # Write the audio bytes to a temporary file
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as temp_file:
+    # Generate a unique filename using uuid
+    unique_filename = f"{uuid.uuid4()}"  # Generate a unique filename with .mp3 extensio    n
+
+    # Write the audio bytes to a temporary file with the unique name
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3", prefix= unique_filename) as temp_file:
         content = await file.read()
         temp_file.write(content)
         webm_file_path = temp_file.name
@@ -82,13 +86,12 @@ async def create_upload_file(file: UploadFile, response: Response):
     # Upload to S3 and get the file URL
     audio_file_url = upload_file_to_s3(agent_audio_response, "s3-hackaton-usina")
 
-    # Return JSON response with file URL and other data
-    allow_origin = response.headers.get("Access-Control-Allow-Origin")
+    # Return JSON response with file URL and other data    
     return {
         "agent": agent,
         "text_response": agent_text_response,
-        "audio_response_url": audio_file_url,  # Use the URL returned from S3
-        "Access-Control-Allow-Origin": allow_origin  # Assuming you have a download route
+        "audio_response_url": audio_file_url,
+        "Access-Control-Allow-Origin": "*"
     }
 
 def who_is_the_agent(transcript):
@@ -96,11 +99,6 @@ def who_is_the_agent(transcript):
     
 def process(transcript):
     return transcript
-
-@app.get("/download/{filename}")
-async def download_file(filename: str):
-    file_path = f"/path/to/temp/directory/{filename}"  # Adjust the path accordingly
-    return FileResponse(file_path, media_type='audio/mpeg')
 
 def upload_file_to_s3(file_name: str, bucket: str, object_name: str = None):
     # If S3 object_name was not specified, use file_name

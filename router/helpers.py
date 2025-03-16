@@ -1,8 +1,4 @@
-# https://blog.futuresmart.ai/building-a-conversational-voice-chatbot-integrating-openais-speech-to-text-text-to-speech
-# Reference: See above
-
-import base64
-
+import uuid  # Import the uuid module
 
 import os
 from openai import OpenAI
@@ -29,7 +25,7 @@ def text_to_speech(input_text):
         voice="nova",
         input=input_text
     )
-    webm_file_path = "temp_audio_play.mp3"
+    webm_file_path = f"{uuid.uuid4()}.mp3"
     with open(webm_file_path, "wb") as f:
         response.stream_to_file(webm_file_path)
     return webm_file_path
