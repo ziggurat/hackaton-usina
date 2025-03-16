@@ -1,8 +1,9 @@
+import tempfile
 from typing import Annotated
 
 import aiofiles
 import uvicorn
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, Response
 from fastapi.responses import FileResponse
 from helpers import text_to_speech, speech_to_text
 from usina_semantic_router import UsinaSemanticRouter
@@ -56,32 +57,43 @@ async def dummyresponse():
     return {"agent": "agentx", "text_response": "lalala", "audio_response": "lalala response"}
 
 @app.post("/uploadaudio/")
-async def create_upload_file(file: UploadFile):
-
-    # Write the audio bytes to a file
-    webm_file_path = "temp_audio.mp3"
-    async with aiofiles.open(webm_file_path, 'wb') as out_file:
+async def create_upload_file(file: UploadFile, response: Response):
+    # Write the audio bytes to a temporary file
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as temp_file:
         content = await file.read()
-        await out_file.write(content)
+        temp_file.write(content)
+        webm_file_path = temp_file.name
 
-    # get the translation
+    # Get the translation
     transcript = speech_to_text(webm_file_path)
 
-    # who is the agent
+    # Who is the agent
     semantic_router = UsinaSemanticRouter()
     agent = semantic_router.get_route(transcript)
 
-    # send to process
+    # Send to process
     agent_text_response = process(transcript)
     agent_audio_response = text_to_speech(agent_text_response)
 
-    return {"agent": agent, "text_response": agent_text_response, "audio_response": agent_audio_response}
+    # Return JSON response with file URL and other data
+    allow_origin = response.headers.get("Access-Control-Allow-Origin")
+    return {
+        "agent": agent,
+        "text_response": agent_text_response,
+        "audio_response_url": f"/download/{agent_audio_response.split('/')[-1]}",
+        "Access-Control-Allow-Origin": allow_origin  # Assuming you have a download route
+    }
 
 def who_is_the_agent(transcript):
     return transcript
     
 def process(transcript):
     return transcript
+
+@app.get("/download/{filename}")
+async def download_file(filename: str):
+    file_path = f"/path/to/temp/directory/{filename}"  # Adjust the path accordingly
+    return FileResponse(file_path, media_type='audio/mpeg')
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
