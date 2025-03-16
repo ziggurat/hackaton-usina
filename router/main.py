@@ -72,6 +72,7 @@ async def create_upload_file(file: UploadFile, response: Response):
         temp_file.write(content)
         webm_file_path = temp_file.name
 
+    """
     # Get the translation
     transcript = speech_to_text(webm_file_path)
 
@@ -93,7 +94,10 @@ async def create_upload_file(file: UploadFile, response: Response):
         "audio_response_url": audio_file_url,
         "Access-Control-Allow-Origin": "*"
     }
+    """
+    return {"Hola": "Mundo"}
 
+    # Get the translation
 def who_is_the_agent(transcript):
     return transcript
     
