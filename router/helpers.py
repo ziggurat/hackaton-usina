@@ -22,11 +22,10 @@ def speech_to_text(audio_data):
 def text_to_speech(input_text):
     response = client.audio.speech.create(
         model="tts-1",
-        voice="nova",
+        voice="alloy",
         input=input_text
     )
-    webm_file_path = f"{uuid.uuid4()}.mp3"
-    with open(webm_file_path, "wb") as f:
-        response.stream_to_file(webm_file_path)
+    webm_file_path = f"{uuid.uuid4()}.mp3"    
+    response.stream_to_file(webm_file_path)
     return webm_file_path
 
