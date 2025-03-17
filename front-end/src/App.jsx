@@ -21,18 +21,16 @@ function App() {
       // console.log('[API Dummy] Data de ka respuesta:', data);
 
 
-      const response = await fetch('https://hackaton-usina-002a8d39a56a.herokuapp.com/uploadaudio/', {
+      const response = await fetch('https://hackaton-usina.onrender.com/uploadaudio', {
         method: 'POST',
-        headers: { 'Content-Type': 'multipart/form-data' },
         body: formData,
-
       });
       
-      console.log('Respuesta de la API:', response);
+      console.log('RESPUESTA de la API:', response);
       const data = await response.json();
       setResponse(data);
     } catch (error) {
-      console.error('Error al llamar a la API:', error);
+      console.error('ERROR al llamar a la API:', error);
       // TMP: Seteo respuesta de prueba;
       setResponse(exampleResponse);
       // return null;  
