@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const useLongPress = (
     onLongPress,
@@ -27,7 +27,7 @@ const useLongPress = (
 
     const clear = useCallback(
         (event, shouldTriggerClick = false) => {
-            longPressTriggered && onPressEnd(event);
+            onPressEnd(event);            
             timeout.current && clearTimeout(timeout.current);
             setLongPressTriggered(false);
             if (shouldPreventDefault && target.current) {
@@ -51,11 +51,11 @@ const isTouchEvent = event => {
 };
 
 const preventDefault = event => {
-if (!isTouchEvent(event)) return;
+  if (!isTouchEvent(event)) return;
 
-if (event.touches.length < 2 && event.preventDefault) {
-    event.preventDefault();
-}
+  if (event.touches.length < 2 && event.preventDefault) {
+      event.preventDefault();
+  }
 };
 
 export default useLongPress;

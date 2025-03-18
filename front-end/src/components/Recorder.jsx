@@ -8,14 +8,10 @@ const Recorder = ({ onAudioRecorded, onRecord }) =>{
   const audioChunks = useRef([]);
 
   const onLongPress = () => {
-    console.log('longpress is triggered');
-    setIsRecording(true);
     startRecording();
   };
 
   const onPressEnd = () => {
-    console.log('pressend is triggered');
-    setIsRecording(false);
     stopRecording();
   };
 
@@ -30,6 +26,7 @@ const Recorder = ({ onAudioRecorded, onRecord }) =>{
   const startRecording = async () => {
     try {
       onRecord();
+      setIsRecording(true);
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorder.current = new MediaRecorder(stream);
 
@@ -43,7 +40,6 @@ const Recorder = ({ onAudioRecorded, onRecord }) =>{
         const audioBlob = new Blob(audioChunks.current, { type: "audio/mp3" });
         onAudioRecorded(audioBlob);
         audioChunks.current = []; // Limpiar buffer
-        // mediaRecorder.current.stop();
         setIsRecording(false);
       };
 
@@ -55,9 +51,8 @@ const Recorder = ({ onAudioRecorded, onRecord }) =>{
   };
 
   const stopRecording = () => {
-    if (mediaRecorder.current ) {
-      console.log(mediaRecorder.current.state);
-      console.log('Deteniendo grabación...');
+    if (mediaRecorder.current && mediaRecorder.current.state === 'recording') {
+      setIsRecording(false);
       mediaRecorder.current.stop();
     }
   };
@@ -68,7 +63,7 @@ const Recorder = ({ onAudioRecorded, onRecord }) =>{
           {...longPressEvent}>
         </button>
         <br />
-        <span>
+        <span className="read-the-docs">
           {isRecording ? "Grabando..." : "Mantén presionado para grabar"}
         </span>
       </div>

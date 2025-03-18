@@ -7,20 +7,17 @@ import { useState } from 'react'
 
 function App() {
    const [response, setResponse] = useState(null);
+   const [isWaitingResponse, setIsWaitingResponse] = useState(false);
 
   const handleAudioRecorded = async (blob) => {
     setResponse(null);
+    setIsWaitingResponse(true);
     console.log('Audio grabado:', blob);
     // TODO: llamar a la API del router chatbot
     const formData = new FormData();
     formData.append('file', blob);
 
     try {
-      // const response = await fetch('https://hackaton-usina-002a8d39a56a.herokuapp.com/dummy-response/');
-      // const data = await response.json();
-      // console.log('[API Dummy] Data de ka respuesta:', data);
-
-
       const response = await fetch('https://hackaton-usina.onrender.com/uploadaudio', {
         method: 'POST',
         body: formData,
@@ -35,6 +32,8 @@ function App() {
       setResponse(exampleResponse);
       // return null;  
     }
+    
+    setIsWaitingResponse(false);
   }
 
   const handleRecording = () => {
@@ -55,24 +54,30 @@ function App() {
         <h1>En que te puedo ayudar?</h1>
         <div className='chat'>
           <div className='buttons'>
-            <Recorder onAudioRecorded={handleAudioRecorded} 
+            
+            <Recorder 
+              onAudioRecorded={handleAudioRecorded} 
               onRecord={handleRecording}/>
             
-            <button className='keyboard' onClick={() => showKeyboard()}>
-              {/* <img src={ keyboardImage } alt="opcion teclado" /> */}
+            {/* <button className='keyboard' onClick={() => showKeyboard()}>
+              <img src={ keyboardImage } alt="opcion teclado" />
               <span>Teclado en pantalla</span>
-            </button>
+            </button> */}
           </div>
           
           {response && (
             <Response response={response} />
           )}
+
+          {isWaitingResponse && (
+            <p>Esperando respuesta...</p>
+          )}
           
         </div>
       </div>
-      <p className="read-the-docs">
+      {/* <p className="read-the-docs">
         Acá puede ir un link a ayuda.
-      </p>
+      </p> */}
     </>
   )
 }
