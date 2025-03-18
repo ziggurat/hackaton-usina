@@ -1,60 +1,41 @@
 import { useState, useRef } from "react";
 import micImage from '../assets/mic.svg'
 import "./Recorder.css";
+import useLongPress from '../hooks/useLongPress'
 
 const Recorder = ({ onAudioRecorded, onRecord }) =>{
-  const [recording, setRecording] = useState(false);
-  const mediaRecorder = useRef(null);
-  const audioChunks = useRef([]);
+  const [isRecording, setIsRecording] = useState(false);
 
-  // Iniciar la grabación cuando el usuario presiona el botón
-  const startRecording = async () => {
-    try {
-      onRecord();
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorder.current = new MediaRecorder(stream);
-
-      mediaRecorder.current.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          audioChunks.current.push(event.data);
-        }
-      };
-
-      mediaRecorder.current.onstop = () => {
-        const audioBlob = new Blob(audioChunks.current, { type: "audio/mp3" });
-        onAudioRecorded(audioBlob);
-        audioChunks.current = []; // Limpiar buffer
-      };
-
-      mediaRecorder.current.start();
-      setRecording(true);
-    } catch (error) {
-      console.error("Error al acceder al micrófono:", error);
-    }
+  const onLongPress = () => {
+    console.log('longpress is triggered');
+    setIsRecording(true);
   };
 
-  // Detener la grabación cuando el usuario suelta el botón
-  const stopRecording = () => {
-    if (mediaRecorder.current && mediaRecorder.current.state !== "inactive") {
-      mediaRecorder.current.stop();
-      setRecording(false);
-    }
+  const onPressEnd = () => {
+    console.log('pressend is triggered');
+    setIsRecording(false);
   };
+
+  const onClick = () => {
+      console.log('click is triggered')
+  }
+
+  const defaultOptions = {
+      shouldPreventDefault: true,
+      delay: 500,
+  };
+  
+  const longPressEvent = useLongPress(onLongPress, onClick, onPressEnd, defaultOptions);
 
   return (
       <div className="recorder">
-        <button className='mic'
-          onMouseDown={startRecording}
-          onMouseUp={stopRecording}
-          onTouchStart={startRecording}
-          onTouchEnd={stopRecording}
-        >
-          <img src={ micImage } alt="Grabar una pregunta" />
+        <button className={`mic ${isRecording? 'recording': ''}`}
+          {...longPressEvent}>
         </button>
+        <br />
         <span>
-          {recording ? "Grabando..." : "Mantén presionado"}
+          {isRecording ? "Grabando..." : "Mantén presionado para grabar"}
         </span>
-  
       </div>
     );
 }

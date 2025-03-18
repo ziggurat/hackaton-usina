@@ -6,14 +6,26 @@
   
   .mic {
     display: flex;
+    align-items: center;
+    justify-content: center;
     width: 96px;
     height: 96px;
     border-radius: 100%;
-    color: #f0f0f0;
-    background-color: #e65a5a;
-  
-    img {
-      width: 64px;
+    background-color: #78be49;
+    background-image: url('../assets/mic.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 64px;
+    box-shadow: 0 0 16px rgba(60, 85, 36, 0.37);
+    transition: background-color 0.3s, box-shadow 0.3s;
+
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+
+    &.recording {
+      background-color: #ee6565;
+      box-shadow: none;
     }
   }
 }
