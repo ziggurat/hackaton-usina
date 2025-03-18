@@ -1,66 +1,45 @@
-import { useState, useRef } from "react";
-import useLongPress from '../hooks/useLongPress'
+import { useState, useRef, useEffect } from "react";
+import { useLongPress, LongPressEventType } from 'use-long-press';
+import useMediaRecorder from '../hooks/useMediaRecorder';
 import "./Recorder.css";
 
-const Recorder = ({ onAudioRecorded, onRecord }) =>{
+const Recorder = ({ onAudioRecorded: notifyAudioRecorded }) =>{
   const [isRecording, setIsRecording] = useState(false);
-  const mediaRecorder = useRef(null);
-  const audioChunks = useRef([]);
+  const { startRecording, stopRecording } = useMediaRecorder(notifyAudioRecorded);
 
-  const onLongPress = () => {
-    startRecording();
+  const recordButtonPressedCallback = async () => {
+    setIsRecording(true);
+    startRecording(notifyAudioRecorded);
   };
 
-  const onPressEnd = () => {
-    stopRecording();
-  };
-
-  const defaultOptions = {
-      shouldPreventDefault: true,
-      delay: 500,
-  };
-  
-  const longPressEvent = useLongPress(onLongPress, onPressEnd, defaultOptions);
-
-  // Iniciar la grabación cuando el usuario presiona el botón
-  const startRecording = async () => {
-    try {
-      onRecord();
-      setIsRecording(true);
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorder.current = new MediaRecorder(stream);
-
-      mediaRecorder.current.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          audioChunks.current.push(event.data);
-        }
-      };
-
-      mediaRecorder.current.onstop = () => {
-        const audioBlob = new Blob(audioChunks.current, { type: "audio/mp3" });
-        onAudioRecorded(audioBlob);
-        audioChunks.current = []; // Limpiar buffer
-        setIsRecording(false);
-      };
-
-      mediaRecorder.current.start();
-      setIsRecording(true);
-    } catch (error) {
-      console.error("Error al acceder al micrófono:", error);
-    }
-  };
-
-  const stopRecording = () => {
-    if (mediaRecorder.current && mediaRecorder.current.state === 'recording') {
+  const handlers = useLongPress(recordButtonPressedCallback, {
+    onStart: (event, meta) => {
+      console.log("Press started", meta);
+    },
+    onFinish: (event, meta) => {
+      console.log("Long press finished", meta);
       setIsRecording(false);
-      mediaRecorder.current.stop();
-    }
-  };
+      stopRecording();
+    },
+    onCancel: (event, meta) => {
+      console.log("Press cancelled", meta);
+      setIsRecording(false);
+      stopRecording();
+    },
+    //onMove: () => console.log("Detected mouse or touch movement"),
+    filterEvents: (event) => true, // All events can potentially trigger long press
+    threshold: 100,
+    captureEvent: true,
+    cancelOnMovement: false,
+    cancelOutsideElement: false,
+    detect: LongPressEventType.Touch,
+  });
 
   return (
       <div className="recorder">
         <button className={`mic ${isRecording? 'recording': ''}`}
-          {...longPressEvent}>
+          {...handlers()}
+          onContextMenu={(e) => e.preventDefault()}>
         </button>
         <br />
         <span className="read-the-docs">

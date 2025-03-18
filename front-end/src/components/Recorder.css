@@ -18,6 +18,7 @@
     background-size: 64px;
     box-shadow: 0 0 16px rgba(60, 85, 36, 0.37);
     transition: background-color 0.3s, box-shadow 0.3s;
+    outline: none !important;
 
     user-select: none;
     -webkit-user-select: none;

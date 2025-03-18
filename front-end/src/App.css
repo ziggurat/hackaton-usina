@@ -1,11 +1,11 @@
 #root {
   /* max-width: 96ch; */
-  /* padding: 2rem; */
+  padding: 2rem;
   display: flex;
   flex-direction: column;
-  /*row-gap: 32px;*/
+  /* row-gap: 32px; */
   text-align: center;
-  /* width: 100%; */
+  width: 100%;
   margin: 0 auto;
 
 }

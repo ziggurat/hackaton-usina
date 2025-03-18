@@ -8,12 +8,12 @@ import { useState } from 'react'
 function App() {
    const [response, setResponse] = useState(null);
    const [isWaitingResponse, setIsWaitingResponse] = useState(false);
+   const [error, setError] = useState(null);
 
   const handleAudioRecorded = async (blob) => {
     setResponse(null);
     setIsWaitingResponse(true);
     console.log('Audio grabado:', blob);
-    // TODO: llamar a la API del router chatbot
     const formData = new FormData();
     formData.append('file', blob);
 
@@ -28,16 +28,13 @@ function App() {
       setResponse(data);
     } catch (error) {
       console.error('ERROR al llamar a la API:', error);
+      setError(error.message);
       // TMP: Seteo respuesta de prueba;
-      setResponse(exampleResponse);
-      // return null;  
+      // setResponse(exampleResponse);
+      return null;  
     }
     
     setIsWaitingResponse(false);
-  }
-
-  const handleRecording = () => {
-    setResponse(null);
   }
 
   const showKeyboard = () => {
@@ -51,13 +48,12 @@ function App() {
           src={usinaLogo} alt="Usina Logo" />
       </div>
       <div className="chat-container">
-        <h1>En que te puedo ayudar?</h1>
+        <h1>¿En qué te puedo ayudar?</h1>
         <div className='chat'>
           <div className='buttons'>
             
             <Recorder 
-              onAudioRecorded={handleAudioRecorded} 
-              onRecord={handleRecording}/>
+              onAudioRecorded={handleAudioRecorded}/>
             
             {/* <button className='keyboard' onClick={() => showKeyboard()}>
               <img src={ keyboardImage } alt="opcion teclado" />
@@ -71,6 +67,10 @@ function App() {
 
           {isWaitingResponse && (
             <p>Esperando respuesta...</p>
+          )}
+
+          {error && (
+            <p>Error: <span>{error}</span></p>
           )}
           
         </div>
