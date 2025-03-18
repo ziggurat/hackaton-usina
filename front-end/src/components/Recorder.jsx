@@ -31,8 +31,7 @@ const Recorder = ({ onAudioRecorded: notifyAudioRecorded }) =>{
     threshold: 100,
     captureEvent: true,
     cancelOnMovement: false,
-    cancelOutsideElement: false,
-    detect: LongPressEventType.Touch,
+    cancelOutsideElement: false
   });
 
   return (
