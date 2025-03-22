@@ -81,6 +81,7 @@ class UsinaTandilQA:
         return {"images": images, "texts": texts}
 
     def prompt_func(self, data_dict):
+        
         # Joining the context texts into a single string
         formatted_texts = "\n".join(data_dict["context"]["texts"])
         messages = []
@@ -95,62 +96,66 @@ class UsinaTandilQA:
             }
             messages.append(image_message)
 
-        print("data dict question: " + data_dict['question'])
+        #print("\n")
+        #print("data dict question: " + data_dict['question'])
 
         text_message_initial = {
             "type": "text",
             "text": (
-                "Como experto en preguntas analiza si la pregunta realizada es directa o si es abierta. "
-                "Una pregunta directa pide datos concretos. Una pregunta abierta requiere contexto, análisis histórico, resúmenes, comparativas.\n"
-                "- Decidir si la pregunta del usuario es directa o abierta.\n"
-                #"Clasifica la pregunta en una de las siguientes categorías:\n"
-                #"- Pregunta directa: Pregunta que no necesita de contexto adicional para ser respondida.\n"
-                #"- Pregunta abierta: Pregunta que necesita de contexto adicional para ser respondida.\n"
-                "Instrucciones:\n"
-                "- NO incluyas el tipo de pregunta en la respuesta."
+                "Role:\n"
+                "Question Analyst\n\n"
+                "Skills:\n"
+                "As an expert in questions, analyze whether the given question is concise or open-ended. "
+                "A concise question asks for specific data, while an open-ended question requires context, historical analysis, summaries, or comparisons.\n"
+                
+                "Instructions:\n"
+                "- Determine whether the user's question is concise or open-ended.\n"
+                "- DO NOT include the type of question in the final response."
             )
         }
         messages.append(text_message_initial)
-        initial_response = [HumanMessage(content=messages)]
-
-        #print("initial response: \n")
-        #print(initial_response)
-        #print("\n")
 
         # Adding the text message for analysis
         text_message = {
             "type": "text",
             "text": (
-                "Como historiador experto y particularmente en la historia de la Usina de Tandil, tu tarea es analizar e interpretar textos e imágenes "
-                "considerando su importancia histórica y cultural. Ambos se recuperarán de una vectorstore basada "
-                "en las palabras clave ingresadas por el usuario. Utiliza tu amplio conocimiento y habilidades analíticas para proporcionar una "
-                "respuesta analizando los chunks minuciosamente y filtrando información similar dependiendo el contexto histórico y cronológico.\n"
-                #f"La pregunta del usuario es: {initial_response}\n"
-                "Si la pregunta es abierta haz lo siguiente:\n"
-                "- Responde la pregunta entre 300 y 1000 caracteres.\n"
-                "- El contexto histórico y cultural del texto (si corresponde).\n"
-                "- Conexiones entre el texto y la imagen (si la hay).\n"
+                "Role:\n"
+                "Historian\n\n"
+                "Skills:\n"
+                "As a historian specializing in the history of the Usina de Tandil, your task is to analyze and interpret texts and images "
+                "while considering their historical and cultural significance. Both will be retrieved from a vector database based on "
+                "ethe keywords entered by the user. Use your analytical skills to provide a "
+                "response by thoroughly examining the chunks and filtering similar information depending on the historical and chronological context.\n"
                 
-                "Si la pregunta es concisa haz lo siguiente:\n"
-                "- Responde la pregunta en no más de 300 caracteres.\n"
-                "Instrucciones:\n"
-                "- Evalúa la cronología de los eventos para contrastar hechos y fechas correctamente.\n"
-                "- Brinda tu respuesta en español.\n"
-                "- Trae una única imagen.\n"
-                "- La respuesta NO debe incluir el análisis previo.\n"
-                "- NO INVENTES. Limitate estrictamente al contexto proporcionada.\n"
-                f"Palabras clave proporcionadas por el usuario: {data_dict['question']}\n\n"
-                "Texto y/o tablas:\n"
+                "Instructions regarding the QUESTION TYPE:\n"
+
+                "If the question is open-ended, follow these steps:\n"
+                "- Respond with an answer between 300 and 1000 characters.\n"
+                "- Provide the historical and cultural context of the text (if applicable).\n"
+                "- Identify connections between the text and the image (if any).\n"
+                
+                "If the question is concise, follow these steps:\n"
+                "- Respond in no more than 300 characters.\n"
+
+                 "Instructions NOT regarding the QUESTION TYPE:\n"
+                "- Evaluate the chronology of events to correctly contrast facts and dates.\n"
+                "- Provide the response in the same language that the question was asked.\n"
+                "- If an image is relevant, retrieve only one.\n"
+                #"- La respuesta NO debe incluir el análisis previo.\n"
+                "- Do not repeat information if the content is redundant in the fragments.\n"
+                "- Strictly adhere to the provided context, DO NOT INVENT.\n"
+
+                f"The keywords provided by the user: \n\n {data_dict['question']}\n\n"
+                "Text and/or tables:\n"
                 f"{formatted_texts}"
             ),
         }
         messages.append(text_message)
-        final_response = [HumanMessage(content=messages)]
+        #for mess in messages:
+        #   print("\n")
+        #   print(mess)
 
-        #final_response.pop(0)
-        #print("final response: \n")
-        #print(final_response)
-        #print("\n")
+        final_response = [HumanMessage(content=messages)]
 
         return final_response
 
@@ -166,7 +171,7 @@ class UsinaTandilQA:
 
         print("\nDocumentos recuperados:")
         for doc in docs:
-            print("\n", doc.page_content)
+           print("\n", doc.page_content)
 
         response = self.chain.invoke(query)
 
