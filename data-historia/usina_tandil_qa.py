@@ -79,6 +79,34 @@ class UsinaTandilQA:
             else:
                 texts.append(doc)
         return {"images": images, "texts": texts}
+    
+    def query_validation(query):
+        if not query:
+            return "No se ingresó ninguna consulta."
+        
+        messages = []
+        
+        text_validator = {
+            "type": "text",
+            "text": (
+                "Role:\n"
+                "Query validator\n\n"
+                "Skills:\n"
+                "As an expert in validation of queries or questions, you will analyze the content of the query and then clasify it \n"
+                "as true or false (boolean value) regarding if matches certain specific considerations to be pointed out at the instructions\n"
+                
+                "Instructions:\n"
+                "- Determine whether the user's question is related to the history of the Usina of Tandil, or not.\n"
+                "- RESPOND only true or false regarding the validation value, NOTHING MORE"
+            )
+        }
+        messages.append(text_validator)
+
+        validation_value = [HumanMessage(content=messages)]
+        print("vvalue: ", validation_value)
+        return validation_value
+        
+
 
     def prompt_func(self, data_dict):
         
@@ -161,18 +189,21 @@ class UsinaTandilQA:
 
     def run_query(self, query):
         """Ejecuta la consulta y devuelve la respuesta."""
-        if not query:
-            return "No se ingresó ninguna consulta."
+        
+        isValidate = self.query_validation(query)
 
-        docs = self.create_text_retriever().invoke(query, k=6)
+        if (isValidate):
+            docs = self.create_text_retriever().invoke(query, k=6)
+            if not docs:
+                return "No hay resultados para la consulta."
 
-        if not docs:
-            return "No hay resultados para la consulta."
+            print("\nDocumentos recuperados:")
+            for doc in docs:
+                print("\n", doc.page_content)
 
-        print("\nDocumentos recuperados:")
-        for doc in docs:
-           print("\n", doc.page_content)
+            response = self.chain.invoke(query)
 
-        response = self.chain.invoke(query)
-
-        return f"\nRESPUESTA FINAL GENERADA:\n\n{response}"
+            return f"\nRESPUESTA FINAL GENERADA:\n\n{response}"
+        else: 
+            return "El agente no podrá procesar este tipo de consulta"
+        
