@@ -7,7 +7,7 @@ uv run main.py
 ## Ejecutar el modulo de query
 
 ```bash
-streamlit run query.py
+python run.py
 ```
 
 ## Datos
@@ -22,3 +22,4 @@ Descargar carpeta `output` donde encontrarán:
 
 `log.txt`
     Interpretar como se cargo la base de datos
+
