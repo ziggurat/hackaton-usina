@@ -28,5 +28,12 @@
       background-color: #ee6565;
       box-shadow: none;
     }
+
+    &.disabled {
+      background-color: #ccc;
+      box-shadow: none;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
   }
 }

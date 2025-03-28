@@ -52,8 +52,9 @@ function App() {
         <div className='chat'>
           <div className='buttons'>
             
-            <Recorder 
-              onAudioRecorded={handleAudioRecorded}/>
+            <Recorder
+              onAudioRecorded={handleAudioRecorded}
+              isWaitingResponse={isWaitingResponse}/>
             
             {/* <button className='keyboard' onClick={() => showKeyboard()}>
               <img src={ keyboardImage } alt="opcion teclado" />

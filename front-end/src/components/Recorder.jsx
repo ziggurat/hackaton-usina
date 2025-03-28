@@ -3,7 +3,7 @@ import { useLongPress, LongPressEventType } from 'use-long-press';
 import useMediaRecorder from '../hooks/useMediaRecorder';
 import "./Recorder.css";
 
-const Recorder = ({ onAudioRecorded: notifyAudioRecorded }) =>{
+const Recorder = ({ onAudioRecorded: notifyAudioRecorded, isWaitingResponse }) =>{
   const [isRecording, setIsRecording] = useState(false);
   const { startRecording, stopRecording } = useMediaRecorder(notifyAudioRecorded);
 
@@ -36,7 +36,9 @@ const Recorder = ({ onAudioRecorded: notifyAudioRecorded }) =>{
 
   return (
       <div className="recorder">
-        <button className={`mic ${isRecording? 'recording': ''}`}
+        <button className={`mic 
+          ${isRecording? 'recording': ''}
+          ${isWaitingResponse? 'disabled': ''}`}
           {...handlers()}
           onContextMenu={(e) => e.preventDefault()}>
         </button>
