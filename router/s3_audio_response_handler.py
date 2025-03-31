@@ -6,7 +6,7 @@ class S3AudioResponseHandler:
         # Initialize any necessary attributes here
         pass
 
-    def upload_audio_response_to_s3(self, file_name: str, bucket: str, object_name: str = None):
+    def upload_audio_response_to_s3(self, file_name: str, region: str, bucket: str, object_name: str = None):
         # If S3 object_name was not specified, use file_name
         if object_name is None:
             object_name = file_name
@@ -20,7 +20,7 @@ class S3AudioResponseHandler:
             print(f"File {file_name} uploaded to {bucket}/{object_name}")
 
             # Construct the full URL of the uploaded file
-            file_url = f"https://{bucket}.s3.us-east-1.amazonaws.com/{object_name}"        
+            file_url = f"https://{bucket}.s3.{region}.amazonaws.com/{object_name}"
             return file_url  # Return the full URL
         except FileNotFoundError:
             print(f"The file {file_name} was not found")
