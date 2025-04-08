@@ -9,17 +9,19 @@ historia = Route(
         "¿Cuál fue el rol de Juan Nigro en la creación y consolidación de la Usina Popular de Tandil?",
         "¿Cómo se describe la evolución de la Usina en relación al desarrollo local de Tandil a lo largo de las décadas?",
         "¿Qué desafíos históricos se resaltan en el relato y cómo se abordaron?",
+        "¿Quien fue el primer empleado de la Usina?",
+        "¿Quien fue el primer presidente de la Usina?",
+        "¿Quien era el presidente de la Usina en 1995"
     ],
 )
 
-# this could be used as an indicator to our chatbot to switch to a more
-# conversational prompt
 organigrama = Route(
     name="organigrama",
     utterances=[
         "¿Cuáles son los cargos principales y en qué áreas o secciones se ubican dentro del edificio?",
         "¿Cómo determina el sistema la ubicación de un empleado específico en el mapa del edificio?",
         "¿Qué datos personales se muestran al usuario y cuáles se omiten para garantizar la privacidad?",
+        "¿Quien es el presidente actual de la Usina?"
     ],
 )
 
