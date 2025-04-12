@@ -13,16 +13,12 @@ import os
 import io
 import traceback
 
-from dotenv import load_dotenv
-
-load_dotenv()
-
 
 class UsinaTandilQA:
     def __init__(self):
         self.image_loader = ImageLoader()
-        self.db_path = os.environ.get('OUTPUT_PATH') + os.environ.get('DB_NAME')
-        self.collection_name = os.environ.get('COLLECTION_NAME')
+        self.db_path = os.environ.get('HISTORIA_DB') # "./data-historia/output/historia_db" #os.environ.get('OUTPUT_PATH') + os.environ.get('DB_NAME')
+        self.collection_name = 'historia' # os.environ.get('COLLECTION_NAME')
 
         self.chroma_client = chromadb.PersistentClient(path=self.db_path)
         self.vector_store = Chroma(
@@ -106,10 +102,10 @@ class UsinaTandilQA:
         
         response = self.llm.invoke([HumanMessage(content=messages)])
 
-        print(f"Query Validation Response: {response.content}")
+        # print(f"Query Validation Response: {response.content}")
         # verifica si la respuesta es 'true' o 'false' y devuelve booleano
         validation_result = response.content.strip().lower() == "true"
-        print(f"Query Validation Result: {validation_result}")
+        # print(f"Query Validation Result: {validation_result}")
         
         return validation_result
         
@@ -193,21 +189,23 @@ class UsinaTandilQA:
 
         return final_response
 
-    def run_query(self, query):
+    # def run_query(self, query):
+    def consultar(self, query):
         """Ejecuta la consulta y devuelve la respuesta."""
     
         if not self.query_validation(query):
-            return "El agente no podrá procesar este tipo de consulta."
+            return "No es posible procesar este tipo de consulta."
 
         docs = self.create_text_retriever().invoke(query, k=6)
+        print("Docs:", len(docs))
         if not docs:
-            return "No hay resultados para la consulta."
+            return "No se obtuvieron resultados para la consulta."
 
-        print("\nDocumentos recuperados:")
-        for doc in docs:
-            print("\n", doc.page_content)
+        # print("\nDocumentos recuperados:")
+        # for doc in docs:
+        #     print("\n", doc.page_content)
 
         response = self.chain.invoke(query)
 
-        return f"\nRESPUESTA FINAL GENERADA:\n\n{response}"
-        
+        # return f"\nRESPUESTA FINAL GENERADA:\n\n{response}"
+        return response

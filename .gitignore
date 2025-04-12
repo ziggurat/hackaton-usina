@@ -14,3 +14,4 @@ wheels/
 tmp/
 *.tmp
 .DS_Store
+*.env

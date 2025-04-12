@@ -73,6 +73,7 @@ async def create_upload_file(file: UploadFile, response: Response):
 
 
 def process(transcript):
+    # return semantic_router.get_answer(transcript)
     return transcript
 
 
