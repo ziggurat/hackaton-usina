@@ -2,17 +2,7 @@ from typing_extensions import Annotated, TypedDict
 from langchain import hub
 from langchain.chat_models import init_chat_model
 from langchain_community.utilities import SQLDatabase
-from dotenv import load_dotenv
-
-# Cargar variables de entorno
-load_dotenv()
-
-# Inicializar el modelo de lenguaje
-llm = init_chat_model("gpt-4o-mini", model_provider="openai")
-
-# Conectar a la base de datos SQLite
-db = SQLDatabase.from_uri("sqlite:///usina.db")
-
+import os
 
 class State(TypedDict):
     """Estructura de datos para manejar el flujo de la consulta."""
@@ -32,8 +22,13 @@ class QueryProcessor:
 
     def __init__(self):
         """Inicializa el procesador de consultas."""
-        self.db = db
-        self.llm = llm
+
+        # Inicializar el modelo de lenguaje
+        self.llm = init_chat_model(os.environ["OPENAI_MODEL_NAME"], model_provider="openai")
+
+        # Conectar a la base de datos SQLite
+        self.db = SQLDatabase.from_uri(os.environ["ORGANIGRAMA_DB"])
+        # print(self.db.get_usable_table_names())
 
     def write_query(self, state: State) -> str:
         """Genera una consulta SQL a partir de una pregunta en lenguaje natural."""
@@ -55,7 +50,7 @@ class QueryProcessor:
     def execute_query(self, state: State) -> str:
         """Ejecuta la consulta SQL generada y devuelve el resultado."""
         try:
-            result = self.db.execute_query(state["query"])
+            result = self.db.run(state["query"])
             state["result"] = str(result)
             return state["result"]
         except Exception as e:
@@ -64,8 +59,9 @@ class QueryProcessor:
     def generate_answer(self, state: State) -> str:
         # Instrucciones de privacidad para el asistente
         privacy_instructions = """
-          Tu rol es ser un asistente para consultas internas sobre empleados y temas relacionados con la usina.
-          Si la pregunta no está relacionada con la usina o con la información interna de la empresa, responde:
+          Eres un asistente para consultas internas sobre empleados y áreas relacionadas con la Usina Popular y Municipal de Tandil.
+          Siempre tus respuestas deben ser en español, y estar expresadas de manera amable, concisa y no técnica.
+          Si la pregunta no está relacionada con la Usina o con la información interna de la empresa, responde:
           "Lo siento, pero no tengo información sobre ese tema. Puedo ayudarte con trámites, consultas administrativas o información sobre la historia de la usina."
         """
 
@@ -79,10 +75,10 @@ class QueryProcessor:
         #
         # Nota: Estas pautas deben guiar la respuesta según el contexto de la consulta sin ser mencionadas textualmente.
         additional_instructions = """
-          Al contestar, utiliza un formato que refleje:
+          Al elaborar tu respuesta, utiliza un formato que refleje:
           • Roles y ubicaciones relevantes para la consulta sobre cargos.
           • Breve descripción del proceso interno para determinar ubicaciones.
-          • Visualización parcial de datos personales, respetando la privacidad.
+          • Provisión parcial de datos personales, respetando la privacidad.
           • Información jerárquica precisa en caso de consultar responsables o jefaturas.
           • Indicadores de integración y actualización dinámica para la información interna.
         """
@@ -91,19 +87,28 @@ class QueryProcessor:
             f"{privacy_instructions}\n\n"
             f"{additional_instructions}\n\n"
             "Sigue las instrucciones anteriores al pie de la letra.\n\n"
-            "Given the following user question, corresponding SQL query, "
-            "and SQL result, answer the user question:\n\n"
-            f"Question: {state['question']}\n"
-            f"SQL Query: {state['query']}\n"
-            f"SQL Result: {state['result']}"
+            "Dada la siguiente pregunta del usuario, su consulta SQL correspondiente, "
+            "y el resultado de la consulta SQL, responde a la pregunta.\n"
+            "No debes inventar información ni hacer suposiciones.\n\n"
+            f"Pregunta: {state['question']}\n"
+            f"Consulta SQL: {state['query']}\n"
+            f"Resultado de Consulta SQL: {state['result']}\n"
+            "Respuesta:"
         )
         response = self.llm.invoke(prompt)
         state["answer"] = response.content
         return state["answer"]
 
-    def process(self, query: str) -> str:
+    def consultar(self, query: str) -> str:
         """Procesa una consulta completa desde la pregunta hasta la respuesta final."""
         state: State = {"question": query, "query": "", "result": "", "answer": ""}
-        self.write_query(state)
-        self.execute_query(state)
-        return self.generate_answer(state)
+        query = self.write_query(state)
+        result = self.execute_query(state)
+        # print(query)
+        # print(result)
+        if len(result) > 0:
+            return self.generate_answer(state)
+        else: 
+            return "No se encontraron resultados para la consulta."
+
+

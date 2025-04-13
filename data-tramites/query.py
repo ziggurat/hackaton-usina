@@ -8,7 +8,23 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from dotenv import load_dotenv
 from langchain.chains import create_retrieval_chain
 
-load_dotenv()
+
+# load_dotenv()
+import os
+from dotenv import load_dotenv, find_dotenv
+from pathlib import Path
+import sys
+
+ENV_PATH = Path('.') / 'usina.env'
+result = load_dotenv(dotenv_path=ENV_PATH.resolve(), override=True)
+# print("Reading OPENAI config:", ENV_PATH.resolve(), result)
+os.environ["OPENAI_MODEL_NAME"] =  os.getenv('LLM_MODEL') # 'gpt-4o-mini'
+os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
+os.environ["EMBEDDINGS_MODEL"] = os.getenv("EMBEDDINGS_MODEL")
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+print(os.environ["OPENAI_MODEL_NAME"])
+print(os.environ["EMBEDDINGS_MODEL"])
+
 
 EMBED_MODEL_ID = "sentence-transformers/all-MiniLM-L6-v2"
 QUESTION_PROMPT = PromptTemplate.from_template(

@@ -5,13 +5,17 @@ from langchain_chroma import Chroma
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain.chains import create_retrieval_chain
-from dotenv import load_dotenv
+import os
 
-load_dotenv()
 
 class ConsultorTramites:
-    def __init__(self, db_path="./tramites_db", collection_name="tramites", 
-                 model_name="gpt-4o", embed_model="sentence-transformers/all-MiniLM-L6-v2",
+
+
+    def __init__(self, # db_path="./data-tramites/tramites_db", 
+                 collection_name="tramites", 
+                 model_name=os.environ["OPENAI_MODEL_NAME"], 
+                 db_path=os.environ["TRAMITES_DB"],
+                 embed_model="sentence-transformers/all-MiniLM-L6-v2",
                  top_k=3):
         """
         Inicializa el consultor de trámites
@@ -40,30 +44,31 @@ class ConsultorTramites:
         # Configurar el prompt
         question_prompt = PromptTemplate.from_template(
             """
-            sos un asistente virtual de la usina municioal y popular de Tandil, siempre tus respuestas tienen que ser en español. Las mismas tienen que ser de manera amable, concisa y breve
-            
+            Eres un asistente virtual de la Usina Municipal y Popular de Tandil, que contesta preguntas sobre trámites de distintos tipos de usuarios.
+            Siempre tus respuestas deben ser en español, y estar expresadas de manera amable, concisa y no técnica.
+            Si la pregunta no está relacionada con la Usina o con la información interna de la empresa, responde: 
+            "Lo siento, pero no tengo información sobre ese tema. Puedo ayudarte con trámites, consultas administrativas o información sobre la historia de la usina."
+ 
             Instrucciones: 
-
-            - En los casos que la respuesta sea muy extensa mostrarlo en forma breve 
-            -En caso de falta de informacion podes consultar nuevamente al usuario
-            -No podras responder preguntas que sean de la historia de la usina ni la manera de organizarse. 
+            - En los casos que la respuesta sea muy extensa, reformularla en forma breve 
+            - En caso de falta de informacion, puedes formular preguntas adicionales para obtener mas detalles.
+            - Tus respuestas deben ser claras y coherentes con la informacion proporcionada en el contexto.
+            - No debes inventar información ni hacer suposiciones.
 
             Contexto:
             ---------------------
             {context}
             ---------------------
             
-            Tus respuestas deben ser claras y concisas, coherentes con la informacion de tu base de datos
-            
-            Given the context information and not prior knowledge, answer the query.
-            Query: {input}
-            Answer:
+            Dada la información de contexto anterior, y sin conocimientos previos, responde a la pregunta.
+            Pregunta: {input}
+            Respuesta:
             """
         )
         
         # Configurar embeddings
         embeddings = HuggingFaceEmbeddings(model_name=self.embed_model)
-        
+
         # Configurar ChromaDB
         chroma_client = chromadb.PersistentClient(path=self.db_path)
         
@@ -102,16 +107,4 @@ class ConsultorTramites:
         except Exception as e:
             return f"Lo siento, ocurrió un error al procesar tu consulta: {str(e)}"
 
-
-# Ejemplo de uso
-if __name__ == "__main__":
-    consultor = ConsultorTramites()
-    
-    while True:
-        pregunta = input("Ingresa tu pregunta sobre trámites (o 'salir' para terminar): ")
-        if pregunta.lower() == 'salir':
-            break
-            
-        respuesta = consultor.consultar(pregunta)
-        print(respuesta)
         
