@@ -39,8 +39,25 @@ AWS_REGION=
 S3_BUCKET_NAME=
 ```
 
-## 6. Run it (development mode)
+## 6. Server
   
 ```bash
-fastapi dev main.py
+uvicorn router.main:app --reload --log-level debug
 ```
+
+## 7. Frontend
+
+```bash
+node -v   
+v22.14.0
+```
+
+```bash
+npm install
+```
+
+```bash
+npm run build
+```
+
+El build generará la carpeta dist con la app, que es servida por el backend.
