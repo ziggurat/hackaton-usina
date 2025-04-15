@@ -16,6 +16,9 @@ from pathlib import Path
 import sys
 
 ENV_PATH = Path('.') / 'usina.env'
+
+print("Loading environment variables from:", ENV_PATH.resolve())
+
 result = load_dotenv(dotenv_path=ENV_PATH.resolve(), override=True)
 # print("Reading OPENAI config:", ENV_PATH.resolve(), result)
 os.environ["OPENAI_MODEL_NAME"] =  os.getenv('LLM_MODEL') # 'gpt-4o-mini'

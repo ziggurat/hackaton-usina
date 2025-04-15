@@ -18,7 +18,7 @@ function App() {
     formData.append('file', blob);
 
     try {
-      const response = await fetch('https://hackaton-usina.onrender.com/uploadaudio', {
+      const response = await fetch('/api/uploadaudio', {
         method: 'POST',
         body: formData,
       });

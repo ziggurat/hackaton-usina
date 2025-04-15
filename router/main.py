@@ -1,28 +1,27 @@
+from .s3_audio_response_handler import S3AudioResponseHandler
+from .speech_processor import SpeechProcessor
+from .usina_semantic_router import UsinaSemanticRouter
+from typing import Annotated
+from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi import FastAPI, File, UploadFile, Response, APIRouter
+import uvicorn
+import os
+import io
+import uuid  # Import the uuid module
 from dotenv import load_dotenv
 
 load_dotenv()
 
-import uuid  # Import the uuid module
-import io
-import os
 
-import uvicorn
-from fastapi import FastAPI, File, UploadFile, Response
-from fastapi.responses import FileResponse
-from fastapi.middleware.cors import CORSMiddleware
-from typing import Annotated
-
-from usina_semantic_router import UsinaSemanticRouter
-from speech_processor import SpeechProcessor
-from s3_audio_response_handler import S3AudioResponseHandler
-
-## Fast API
+# Fast API
 app = FastAPI()
 speech_processor = SpeechProcessor()
 audio_response_handler = S3AudioResponseHandler()
 semantic_router = UsinaSemanticRouter()
 
-## CORS configuration
+# CORS configuration
 origins = [
     "*",
 ]
@@ -35,45 +34,45 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Create a new router for your API endpoints
+api_router = APIRouter(prefix="/api")
 
-@app.get("/")
+
+@api_router.get("/hello")
 def read_root():
     return {"Hello": "World"}
 
-@app.post("/uploadaudio/")
+
+@api_router.post("/uploadaudio")
 async def create_upload_file(file: UploadFile, response: Response):
     # Generate a unique filename using uuid
-    unique_filename = f"{uuid.uuid4()}"  # Generate a unique filename with .mp3 extension
-
-    # Read the uploaded file and get the transcript
+    unique_filename = f"{uuid.uuid4()}"
     audio_data = await file.read()
     buffer = io.BytesIO(audio_data)
     buffer.name = f"{unique_filename}.mp3"
     transcript = speech_processor.speech_to_text_from_file(buffer)
-
-    # Identify the agent from the transcript
     agent = semantic_router.get_route(transcript)
-
-    # Request the agent for a response from the transcript
     agent_text_response = process(transcript)
-
-    # From the text response, generate an audio response
     audio_response = speech_processor.text_to_speech(agent_text_response)
-
-    # Upload to S3 and get the file URL
-    audio_file_url = audio_response_handler.upload_audio_response_to_s3(audio_response, os.environ['AWS_REGION'],
-                                                                        os.environ['S3_BUCKET_NAME'])
-
-    # Return JSON response with file URL and other data
+    audio_file_url = audio_response_handler.upload_audio_response_to_s3(
+        audio_response,
+        os.environ['AWS_REGION'],
+        os.environ['S3_BUCKET_NAME']
+    )
     return {
         "agent": agent,
         "text_response": agent_text_response,
         "audio_response_url": audio_file_url,
     }
 
+# Include the API router in your main app
+app.include_router(api_router)
+
+app.mount("/", StaticFiles(directory="./front-end/dist", html=True), name="static")
+
 
 def process(transcript):
-    # return semantic_router.get_answer(transcript)
+    #  return semantic_router.get_answer(transcript)
     return transcript
 
 

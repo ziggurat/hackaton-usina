@@ -1,10 +1,13 @@
 from semantic_router import Route, SemanticRouter
 from semantic_router.encoders import OpenAIEncoder
 
-import sys
-sys.path.append("data-tramites")
-sys.path.append("data-organigrama")
-sys.path.append("data-historia")
+# import sys
+# sys.path.append("data-tramites")
+# sys.path.append("data-organigrama")
+# sys.path.append("data-historia")
+
+# # print sys.path
+# print(sys.path)
 
 import os
 from pathlib import Path
@@ -20,15 +23,15 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 os.environ["TRAMITES_DB"] = os.getenv("TRAMITES_DB")
 os.environ["HISTORIA_DB"] = os.getenv("HISTORIA_DB")
 os.environ["ORGANIGRAMA_DB"] = os.getenv("ORGANIGRAMA_DB")
-print(os.environ["OPENAI_MODEL_NAME"])
-# print(os.environ["EMBEDDINGS_MODEL"])
-print(os.environ["TRAMITES_DB"])
-print(os.environ["ORGANIGRAMA_DB"])
-print(os.environ["HISTORIA_DB"])
+# print(os.environ["OPENAI_MODEL_NAME"])
+# # print(os.environ["EMBEDDINGS_MODEL"])
+# print(os.environ["TRAMITES_DB"])
+# print(os.environ["ORGANIGRAMA_DB"])
+# print(os.environ["HISTORIA_DB"])
 
-from tramite import ConsultorTramites
-from query_processor import QueryProcessor
-from usina_tandil_qa import UsinaTandilQA
+from historia import UsinaTandilQA
+from organigrama import QueryProcessor
+from tramites import ConsultorTramites
 
 class UsinaSemanticRouter:
 

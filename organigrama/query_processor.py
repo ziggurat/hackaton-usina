@@ -24,7 +24,7 @@ class QueryProcessor:
         """Inicializa el procesador de consultas."""
 
         # Inicializar el modelo de lenguaje
-        self.llm = init_chat_model(os.environ["OPENAI_MODEL_NAME"], model_provider="openai")
+        self.llm = init_chat_model(os.environ["LLM_MODEL"], model_provider="openai")
 
         # Conectar a la base de datos SQLite
         self.db = SQLDatabase.from_uri(os.environ["ORGANIGRAMA_DB"])
