@@ -15,19 +15,12 @@ from dotenv import load_dotenv
 
 ENV_PATH = Path('.') / 'usina.env'
 result = load_dotenv(dotenv_path=ENV_PATH.resolve(), override=True)
-# print("Reading OPENAI config:", ENV_PATH.resolve(), result)
 os.environ["OPENAI_MODEL_NAME"] =  os.getenv('LLM_MODEL') # 'gpt-4o-mini'
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
-# os.environ["EMBEDDINGS_MODEL"] = os.getenv("EMBEDDINGS_MODEL")
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 os.environ["TRAMITES_DB"] = os.getenv("TRAMITES_DB")
 os.environ["HISTORIA_DB"] = os.getenv("HISTORIA_DB")
 os.environ["ORGANIGRAMA_DB"] = os.getenv("ORGANIGRAMA_DB")
-# print(os.environ["OPENAI_MODEL_NAME"])
-# # print(os.environ["EMBEDDINGS_MODEL"])
-# print(os.environ["TRAMITES_DB"])
-# print(os.environ["ORGANIGRAMA_DB"])
-# print(os.environ["HISTORIA_DB"])
 
 from historia import UsinaTandilQA
 from organigrama import QueryProcessor
@@ -53,8 +46,9 @@ class UsinaSemanticRouter:
         name="organigrama",
         utterances=[
             "¿Cuáles son los cargos principales y en qué áreas o secciones se ubican dentro del edificio?",
-            "¿Cómo determina el sistema la ubicación de un empleado específico en el mapa del edificio?",
-            "¿Qué datos personales se muestran al usuario y cuáles se omiten para garantizar la privacidad?",
+            "¿Donde puedo encontrar al encargado de nuevas conexiones?",
+            "¿Quien es el gerente?",
+            "¿Cual es el interno del gerente?",
             "¿Quien es el presidente actual de la Usina?"
         ],
     )
@@ -67,6 +61,7 @@ class UsinaSemanticRouter:
             "¿Cómo se orienta al usuario para adherirse al servicio de factura digital?",
             "¿Qué opciones y condiciones se ofrecen en el trámite de Conexión (habilitación de nuevo suministro)?",
             "¿Cuáles son los tiempos de aviso y las condiciones especiales para solicitar trámites como el cambio de titularidad o la baja de suministro?",
+            "¿Como accedo a la oficina virtual?"
         ],
     )
 
@@ -100,7 +95,7 @@ class UsinaSemanticRouter:
         if target_backend is None:
             return "Lo siento, no tengo información sobre ese tema."
 
-        return target_backend.consultar(query)
+        return route, target_backend.consultar(query)
     
 
 # Ejemplo de uso

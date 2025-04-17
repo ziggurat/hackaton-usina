@@ -8,17 +8,15 @@ const Response = ({ response }) => {
   // Validar si el agente es uno de los valores permitidos
   const agentesValidos = ["historia", "organigrama", "tramites"];
 
+  let utterance = new SpeechSynthesisUtterance(text_response);
+  speechSynthesis.speak(utterance);
+
   return (
     <div style={{ border: "1px solid #ccc", padding: "10px", borderRadius: "5px", margin: "10px 0" }}>
-      <h3 style={{ color: "#333", textTransform: "capitalize" }}>{agent ? agent : "(agente no definido)"}</h3>
-      <p style={{ fontSize: "16px", color: "#555" }}>{text_response}</p>
+      <h3 style={{ color: "#333", textTransform: "capitalize"}}>{agent ? agent : "Ningun agente pudo contestar su pregunta"}</h3>
+      <p style={{ fontSize: "16px", color: "#555", textWrap: "pretty"  }}>{text_response}</p>
       
-      {audio_response_url && (
-        <audio controls>
-          <source src={audio_response_url} type="audio/mp3" />
-          Tu navegador no soporta el elemento de audio.
-        </audio>
-      )}
+      {audio_response_url}
     </div>
   );
 };
