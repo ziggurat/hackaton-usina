@@ -15,7 +15,7 @@
     npm run build
     ```
 
-## Backend setup
+## Backend setup (Run these steps at the root of the repo)
 
 1. Install uv
     ```bash
