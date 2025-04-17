@@ -1,4 +1,5 @@
 import uuid
+import os
 from openai import OpenAI
 from dotenv import load_dotenv
 
@@ -34,8 +35,8 @@ class SpeechProcessor:
             model="tts-1",
             voice="alloy",
             input=input_text
-        )
-        webm_file_path = f"{uuid.uuid4()}.mp3"    
-        response.stream_to_file(webm_file_path)
-        return webm_file_path
+        )        
+        webm_file_name = f"{uuid.uuid4()}.mp3"
+        response.stream_to_file(f"./front-end/dist/{webm_file_name}")
+        return webm_file_name
     

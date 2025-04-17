@@ -37,12 +37,6 @@ app.add_middleware(
 # Create a new router for your API endpoints
 api_router = APIRouter(prefix="/api")
 
-
-@api_router.get("/hello")
-def read_root():
-    return {"Hello": "World"}
-
-
 @api_router.post("/uploadaudio")
 async def create_upload_file(file: UploadFile, response: Response):
     # Generate a unique filename using uuid
@@ -50,31 +44,18 @@ async def create_upload_file(file: UploadFile, response: Response):
     audio_data = await file.read()
     buffer = io.BytesIO(audio_data)
     buffer.name = f"{unique_filename}.mp3"
-    transcript = speech_processor.speech_to_text_from_file(buffer)
-    agent = semantic_router.get_route(transcript)
-    agent_text_response = process(transcript)
-    audio_response = speech_processor.text_to_speech(agent_text_response)
-    audio_file_url = audio_response_handler.upload_audio_response_to_s3(
-        audio_response,
-        os.environ['AWS_REGION'],
-        os.environ['S3_BUCKET_NAME']
-    )
+    transcript = speech_processor.speech_to_text_from_file(buffer)    
+    agent, text_response = semantic_router.get_answer(transcript)  
+    
     return {
         "agent": agent,
-        "text_response": agent_text_response,
-        "audio_response_url": audio_file_url,
+        "text_response": text_response
     }
 
 # Include the API router in your main app
 app.include_router(api_router)
 
 app.mount("/", StaticFiles(directory="./front-end/dist", html=True), name="static")
-
-
-def process(transcript):
-    #  return semantic_router.get_answer(transcript)
-    return transcript
-
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
