@@ -1,4 +1,3 @@
-from .s3_audio_response_handler import S3AudioResponseHandler
 from .speech_processor import SpeechProcessor
 from .usina_semantic_router import UsinaSemanticRouter
 from typing import Annotated
@@ -18,7 +17,6 @@ load_dotenv()
 # Fast API
 app = FastAPI()
 speech_processor = SpeechProcessor()
-audio_response_handler = S3AudioResponseHandler()
 semantic_router = UsinaSemanticRouter()
 
 # CORS configuration
