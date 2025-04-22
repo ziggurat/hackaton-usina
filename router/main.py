@@ -11,11 +11,15 @@ import io
 import uuid  # Import the uuid module
 from dotenv import load_dotenv
 
+import ssl
+
 load_dotenv()
 
 
 # Fast API
 app = FastAPI()
+ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+ssl_context.load_cert_chain('/path/to/cert.pem', keyfile='/path/to/key.pem')
 speech_processor = SpeechProcessor()
 semantic_router = UsinaSemanticRouter()
 
