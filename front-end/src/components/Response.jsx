@@ -9,6 +9,7 @@ const Response = ({ response }) => {
   const agentesValidos = ["historia", "organigrama", "tramites"];
 
   let utterance = new SpeechSynthesisUtterance(text_response);
+  utterance.lang = 'es-AR';
   speechSynthesis.speak(utterance);
 
   return (
