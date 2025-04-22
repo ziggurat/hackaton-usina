@@ -93,7 +93,7 @@ class UsinaSemanticRouter:
             target_backend = self.backends[route]
         print("Redirecting to backend:", route, target_backend)
         if target_backend is None:
-            return "Lo siento, no tengo información sobre ese tema."
+            return None, "Lo siento, no tengo información sobre ese tema."
 
         return route, target_backend.consultar(query)
     

@@ -46,6 +46,7 @@ async def create_upload_file(file: UploadFile, response: Response):
     agent, text_response = semantic_router.get_answer(transcript)  
     
     return {
+        "question": transcript,
         "agent": agent,
         "text_response": text_response
     }
